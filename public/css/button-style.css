@@ -1,0 +1,121 @@
+/* just some css to make an overlay cover all A-Frame */
+
+#user-gesture-overlay {
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 999999;
+    cursor: pointer;
+  }
+  
+  .center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  
+  #user-gesture-button {
+    display: none;
+    width: 100%;
+    height: 150%;
+    background-color: rgb(235, 79, 38);
+    color: white;
+    font-size: 50px;
+    padding: 14px 20px;
+    margin: 0px 10px 8px 10px;
+    border: 5px solid #ffffff;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  #instructions {
+    font-size: 25px;
+    padding: 14px 20px;
+    margin: 0px 10px 8px 10px;
+    background-color: rgb(243, 161, 140);
+    border: 5px solid #ffffff;
+    border-radius: 20px;
+    width: 93%;
+    
+  }
+  #user-gesture-button:hover {
+    background-color: rgb(246, 194, 67);
+  }
+  
+  #loading-animation {
+    display: block;
+    width: 80%;
+    height: 80%;
+  }
+
+  #drop-button {
+    background-color: #585858; 
+    width:350px;
+    height: 50px; 
+    font-size: 20px; 
+    color: rgb(255, 255, 255); 
+    display: inline; 
+    position: absolute; 
+    z-index: 1; 
+    right:0;
+    border: 5px solid #ffffff;
+    border-radius: 20px;
+    }
+
+  #drop-button:hover{
+    background-color: #b2b2b2;
+    color: rgb(0, 0, 0); 
+  }
+
+  #drop-button:focus{
+    background-color: #ff8d8d;
+    color: rgb(0, 0, 0); 
+  }
+
+  .move-button{
+    z-index: 1;
+    background-color: #ffbcbc; 
+    width:50px;
+    height: 50px;  
+    display: inline; 
+    position: absolute; 
+    z-index: 1; 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image:url(/assets/arrow.png); 
+    background-size: 50px;
+  }
+
+  .move-button:hover{
+    background-color: #ffffff; 
+  }
+  #forward-button{
+    bottom: 100px;
+    right: 90px;
+  }
+
+  #backward-button{
+    transform: rotate(180deg);
+    bottom: 45px;
+    right: 90px;
+  }
+
+  #left-button{
+    transform: rotate(270deg);
+    bottom: 65px;
+    right: 145px;
+  }
+
+  #right-button{
+    transform: rotate(90deg);
+    bottom: 65px;
+    right: 35px;
+  }

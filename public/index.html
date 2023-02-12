@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>Hello, WebVR! - A-Frame</title>
+      <meta name="description" content="Hello, WebVR! - A-Frame">
+      <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+      <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+
+       <!-- loading in our js file with custom component -->
+       <script src="js/object-exist.js"></script>
+       <script src="js/object-interaction.js"></script>
+       <script src="js/load-model.js"></script>
+       <script src="js/player-move.js"></script>
+       <script src="js/load-sound.js"></script>
+
+       <link rel="stylesheet" href="css/button-style.css">
+
+      <!--
+                             Refrences for the audio files and 3D models
+
+           Sofa Model from: https://free3d.com/3d-model/a-simple-sofa-781525.html           
+           Music from #Uppbeat (free for Creators!):https://uppbeat.io/t/richard-smithson/cali-sunset License code: I4STOIMPXNMKZ0D3 
+           Click sound effect: https://www.epidemicsound.com/track/6wMz6oUJ1a/  
+           Dresser model from https://free3d.com/3d-model/living-room-furniture-742294.html 
+           Bed model from https://free3d.com/3d-model/modern-bed-783821.html     
+           Drawers model https://www.turbosquid.com/3d-models/wooden-cabinet-3d-2005794#
+           
+      -->
+
+    </head>
+    <body>
+
+      <!-- 2D elements before entering the 3D scene -->
+      <div id="user-gesture-overlay">
+        <div class="center">
+          <button id="user-gesture-button" onclick="startExperience()">Enter Experience</button>
+          <p id="instructions"><strong>Instructions:</strong> You can pick up any furntiture by clicking on it and dropping it with the button on top!</p>
+        </div>
+      </div>
+     
+      <a-scene start-experience>
+
+        <!-- 2D button for droping objects and movements-->
+        <button id="drop-button" class="interactive">Click me to drop the object</button> 
+        <button id="backward-button" class="interactive move-button"></button>
+        <button id="forward-button" class="interactive move-button"></button>
+        <button id="left-button" class="interactive move-button"></button>
+        <button id="right-button" class="interactive move-button"></button>
+
+        <!-- Creating audio files and entities -->
+        <audio id="calm_music" src="/assets/calmMusic.mp3" preload="auto" crossorigin="anonymous"></audio>
+        <audio id="click_sound" src="/assets/click.mp3" preload="auto" crossorigin="anonymous"></audio>
+        
+        <a-entity class="music" sound="src:#calm_music; autoplay:false;"></a-entity>
+        <a-entity class="effect" sound="src:#click_sound; autoplay:false;"></a-entity>
+
+        <!--Intializing the 3D models-->
+        <a-asset-item id="dresser_model" response-type="arraybuffer" src="assets/dresser.glb"></a-asset-item>
+        <a-asset-item id="cabinet_model" response-type="arraybuffer" src="assets/cabinet.glb"></a-asset-item>
+        <a-asset-item id="bed_model"     response-type="arraybuffer" src="assets/bed.glb"></a-asset-item>
+        <a-asset-item id="drawers_model"  response-type="arraybuffer" src="assets/drawers.glb"></a-asset-item>
+        
+         
+
+        <!-- Adding camera and Light-->
+        <a-entity id="camera" camera wasd-controls look-controls mouse-cursor position="0 1.6 0">
+          <a-entity cursor="rayOrigin:mouse;" raycaster="far:20; interval:200; objects:.interactive"></a-entity>
+          <a-entity light="type:spot; intensity:1.4; castShadow:true; shadowBias:-0.0005; angle:40; penumbra:0.3;" position="0.5 -0.5 0" rotation="0 0 0"></a-entity>
+        </a-entity> 
+        
+      
+    
+        <!-- CREATING THE ROOM -->
+
+          <a-entity class="floor"   geometry="primitive:plane; width:30; height:50;" material="color:grey;" position="0 0.01 0" rotation="-90 0 0"></a-entity>
+          <a-entity class="wall"    geometry="primitive:plane; width:30; height:20;" material="color:#ffe699;" position="15 8 0"  rotation="0 -90 0"></a-entity>
+          <a-entity class="wall"    geometry="primitive:plane; width:30; height:20;" material="color:#ffe699;" position="-15 8 0" rotation="0 90 0"></a-entity>
+          <a-entity class="wall"    geometry="primitive:plane; width:30; height:20;" material="color:#ffe699;" position="0 8 15"  rotation="0 180 0"></a-entity>
+          <a-entity class="wall"    geometry="primitive:plane; width:30; height:20;" material="color:#ffe699;" position="0 8 -15" rotation="0 0 0"></a-entity>
+        
+        <!-- Creating Sofa Text Panel -->
+        <a-entity id="button_plane" position="0 0.5 -2" rotation="-10 0 0" scale="1 1 1">
+          <a-entity geometry="primitive:box; width:2.0; height:1.5; depth:0.2;" material="color:white;" position="0 0 -0.11"></a-entity>
+          <a-entity text="value:Create A Sofa!; 
+                          color:black; font:roboto; width:1.3; anchor:left; baseline:top; wrapCount:12;" position="-0.5 0.5 0.01" ></a-entity>
+          <a-entity text="value:Click on this button to create a sofa!The button will disappear after you press it!;
+                          color:black; font:roboto; width:1.25; anchor:left; baseline:top; wrapCount:18;" position="-0.5 0.25 0.01" ></a-entity>
+        </a-entity>
+
+
+        <!-- Button object with animation for creating the sofa -->
+
+        <a-entity id="sofa_button">
+          <a-entity class="button interactive" load-model="src: assets/sofa.glb; position: -12 -0.5 -6.7" position="-1.6 0.6 -2.2" geometry="primitive:cylinder; radius:0.15; height:0.2;" material="color:rgb(139,69,19)"
+                    animation__mouseenter="property:material.color; type:color; to:rgb(244,164,96); startEvents:mouseenter; dur:200"
+                    animation__mouseleave="property:material.color; type:color; to:rgb(139,69,19); startEvents:mouseleave; dur:200"
+                    shadow></a-entity>
+          <a-entity position="-1.6 0.3 -2.2" geometry="primitive:box; width:0.5; depth:0.5; height:0.6;" material="color:rgb(255, 255, 255)" shadow></a-entity>
+        </a-entity>
+
+        <!-- Creating the bubble blower object and panel -->
+        <a-entity id="bubble_panel" position="-8.750 0.413 -0.238" rotation="-10 30 0" scale="1 1 1">
+          <a-entity geometry="primitive:box; width:2.0; height:0.68; depth:0.2;" material="color:white;" position="0 0 -0.11"></a-entity>
+          <a-entity text="value:Bubble Blower!; 
+                          color:black; font:roboto; width:1.3; anchor:left; baseline:top; wrapCount:12;" position="-0.614 0.28 0.008" ></a-entity>
+          <a-entity text="value:Click The pink button to create as many bubbles as you want!;
+                          color:black; font:roboto; width:1.25; anchor:left; baseline:top; wrapCount:20;" position="-0.614 0.052 0.008" ></a-entity>
+        </a-entity>
+
+        <a-entity>
+          <a-entity position="-7.8 1.32 -1.68" scale="2 0.5 2" rotation="0 -60 0" geometry="primitive:cylinder; radius:0.15; height:0.05;" material="color:#994d00"></a-entity>
+          <a-entity class="button interactive" id="click-sound" play-audio onclick="startAudio()" create-obj position="-7.49 0.6 -1.17"  rotation="90 30 0" geometry="primitive:box; width:0.5; depth:0.5; height:0.2;" material="color:rgb(255, 212, 128)"
+                    animation__mouseenterB="property:material.color; type:color; to:rgb(255, 179, 26); startEvents:mouseenter; dur:200"
+                    animation__mouseleaveB="property:material.color; type:color; to:rgb( 255, 212, 128); startEvents:mouseleave; dur:200"
+                    animation__click  ="property:position; from:-7.49 0.6 -1.19; to:-7.49 0.6 -1.17; startEvents:click; dur:300"></a-entity>
+          <a-entity position="-8 0.3 -2" geometry="primitive:box; width:2; depth:0.9; height:2;" rotation="0 -60 0" material="color:#994d00" shadow></a-entity>
+        </a-entity>
+
+        <!-- Button object to delete the bubbles "spheres" and the panel -->
+        <a-entity>
+          <a-entity class="button interactive" delete-obj position="-6.8 0.6 -2" scale="0.5 0.5 0.5" geometry="primitive:cylinder; radius:0.15; height:0.2;" material="color:rgb(139,69,19)"
+                    animation__menter="property:material.color; type:color; to:rgb(244,164,96); startEvents:mouseenter; dur:200"
+                    animation__mleave="property:material.color; type:color; to:rgb(139,69,19); startEvents:mouseleave; dur:200"
+                    animation__clicks="property:position; from:-6.8 0.57 -2; to:-6.8 0.6 -2; startEvents:click; dur:300"> </a-entity>
+          <a-entity position="-6.8 0.3 -2" geometry="primitive:box; width:0.3; depth:0.2; height:0.6;" material="color:rgb(255, 255, 255)" shadow></a-entity>
+        </a-entity>
+
+        <a-entity id="clear_panel" position="-5.48 0.443 -1.74" rotation="-10 0 0" scale="1 1 1">
+          <a-entity geometry="primitive:box; width:1.5; height:0.68; depth:0.2;" material="color:white;" position="0 0 -0.11"></a-entity>
+          <a-entity text="value:Click this button to clear all the bubbles!;
+                          color:black; font:roboto; width:1.4; anchor:left; baseline:top; wrapCount:20;" position="-0.614 0.052 0.008" ></a-entity>
+        </a-entity>        
+
+        <!-- Adding the models to the room-->
+        <a-entity id="dresser" class="interactive"  object-interaction position="-3.9 -0.1 -12.84" rotation="0 0 0" scale="3 3 3" gltf-model="#dresser_model"></a-entity>
+        <a-entity id="cabinet" class="interactive"  object-interaction position="-11 0 2"    rotation="0 -270 0"   scale="2 2 2" gltf-model="#cabinet_model"></a-entity>
+        <a-entity id="bed"     class="interactive"  object-interaction position="5.4 -0.13 -3.42"   rotation="0 180 0"   scale="1.5 1.5 1.5" gltf-model="#bed_model"></a-entity>
+        <a-entity id="drawers"  class="interactive"  object-interaction position="3.4 0 -8.7"   rotation="0 0 0"   scale="2 2 2" gltf-model="#drawers_model"></a-entity>
+
+        <!-- adding an environment-->
+        <a-entity environment="preset: contact;"></a-entity> 
+
+          
+        
+          </a-scene>
+          
+           
+    </body>
+</html>
